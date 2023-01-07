@@ -1,4 +1,4 @@
-FROM python:3.12-rc-bullseye
+FROM python:3.11-bullseye
 
 # https://vsupalov.com/docker-arg-env-variable-guide/
 # https://bobcares.com/blog/debian_frontendnoninteractive-docker/
@@ -24,7 +24,7 @@ ENV LANGUAGE en_US:en
 
 WORKDIR /root/projects
 
-EXPOSE 8000
+RUN pip install Django==4.1.5
 
 CMD tail -f /dev/null
 # CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
