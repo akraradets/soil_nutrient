@@ -27,4 +27,4 @@ WORKDIR /root/projects
 RUN pip install Django==4.1.5
 
 CMD tail -f /dev/null
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD python manage.py runserver 0.0.0.0:80
