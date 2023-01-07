@@ -1,0 +1,9 @@
+version: '3'
+services:
+  web:
+    hostname: 'app.puipalm'
+    build:
+      context: .
+      dockerfile: django.Dockerfile
+    # volumes:
+    #   - ./:/root/projects
