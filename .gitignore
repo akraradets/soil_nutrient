@@ -1,2 +1,7 @@
 /django.vscode-server
+/pytorch.vscode-server
 __pycache__
+/pytorch/dataset/*
+/pytorch/result/*
+/pytorch/weight/*
+!.keeps
