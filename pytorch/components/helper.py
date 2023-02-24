@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
-def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE:str):
+import os
+def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE:str, save_path:str):
     J_fn = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     model.to(DEVICE)
@@ -11,10 +12,10 @@ def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE
     for e in range(epochs):
         #for train loader
         total_corr = 0
+        epoch_loss = 0
+        start_time = time.time()
         for b, (image, label, _) in enumerate(loader):
-            
-            start_time = time.time()
-            
+            print(f'start:{b}')
             #image: (B, C, W, H)
             #label: (B)
             image = image.to(DEVICE)
@@ -29,12 +30,16 @@ def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE
             optimizer.step() #5. step
             
             train_losses.append(train_loss.detach().cpu())
+            epoch_loss += train_loss.detach().cpu()
+            print(f'stop:{b}')
             #total time
-            total_time = time.time() - start_time
             
             # if (b+1) % 20 == 0:
             #     print(b, train_loss)
             # print(f"Epoch: {e} - Batch: {b} - Train Loss: {train_loss:.2f} - Total Time: {total_time:.2f}s")
-        if((e+1)%10 == 0):
-            print(e)
+        # if((e+1)%10 == 0):
+        #     print(e)
+        total_time = time.time() - start_time
+        print(total_time, e, epoch_loss)
+        torch.save(model.state_dict(), save_path)
     return model, train_losses
