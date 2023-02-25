@@ -15,7 +15,7 @@ def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE
         epoch_loss = 0
         start_time = time.time()
         for b, (image, label, _) in enumerate(loader):
-            print(f'start:{b}')
+            # print(f'start:{b}')
             #image: (B, C, W, H)
             #label: (B)
             image = image.to(DEVICE)
@@ -31,7 +31,7 @@ def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE
             
             train_losses.append(train_loss.detach().cpu())
             epoch_loss += train_loss.detach().cpu()
-            print(f'stop:{b}')
+            # print(f'stop:{b}')
             #total time
             
             # if (b+1) % 20 == 0:
