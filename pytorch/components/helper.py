@@ -1,3 +1,6 @@
+import mlflow
+from mlflow.models.signature import infer_signature
+from mlflow.pytorch import log_model
 import torch
 from torch.utils.data import DataLoader
 import os
@@ -41,5 +44,8 @@ def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE
         #     print(e)
         total_time = time.time() - start_time
         print(total_time, e, epoch_loss)
+        mlflow.log_metric('epoch_loss', epoch_loss, step=e)
+        log_model(pytorch_model=model,artifact_path="model")
+        
         torch.save(model.state_dict(), save_path)
     return model, train_losses

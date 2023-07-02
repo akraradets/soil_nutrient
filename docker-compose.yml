@@ -1,16 +1,5 @@
 version: '3'
 services:
-  web:
-    hostname: 'web.soil'
-    build:
-      context: .
-      dockerfile: django.Dockerfile
-    ports:
-      - 8080:80
-    volumes:
-      - ./django.vscode-server:/root/.vscode-server
-      - ./django/:/root/projects
-  
   pytorch:
     hostname: 'pytorch.soil'
     build:
