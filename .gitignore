@@ -5,3 +5,4 @@ __pycache__
 /pytorch/result/*
 /pytorch/weight/*
 !.keeps
+pytorch/mlruns
