@@ -4,6 +4,7 @@ from mlflow.pytorch import log_model
 import torch
 from torch.utils.data import DataLoader
 import os
+import math
 def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE:str):
     J_fn = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -12,6 +13,8 @@ def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE
     import time
     train_losses = []
     #for epochs
+    best_loss = math.inf
+
     for e in range(epochs):
         #for train loader
         total_corr = 0
@@ -44,7 +47,11 @@ def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE
         #     print(e)
         total_time = time.time() - start_time
         print(total_time, e, epoch_loss)
-        mlflow.log_metric('epoch_loss', epoch_loss, step=e)
-        log_model(pytorch_model=model,artifact_path="model")
+        # Check if model improve?
+        if( epoch_loss <= best_loss ):
+            print('save model!!')
+            mlflow.log_metric('epoch_loss', epoch_loss, step=e)
+            log_model(pytorch_model=model,artifact_path="model")
+            best_loss = epoch_loss
                 
     return model, train_losses
