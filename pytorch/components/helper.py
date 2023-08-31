@@ -48,9 +48,9 @@ def train(model:torch.nn.Module, loader:DataLoader, epochs:int, lr:float, DEVICE
         total_time = time.time() - start_time
         print(total_time, e, epoch_loss)
         # Check if model improve?
+        mlflow.log_metric('epoch_loss', epoch_loss, step=e)
         if( epoch_loss <= best_loss ):
             print('save model!!')
-            mlflow.log_metric('epoch_loss', epoch_loss, step=e)
             log_model(pytorch_model=model,artifact_path="model")
             best_loss = epoch_loss
                 
