@@ -88,6 +88,7 @@ class Imageset(Enum):
 class SoilDataset_bigset(Dataset):
     def __init__(self, imageset:Imageset, device:Devices, environment:Environments, transform=None):
         # BasePath of the dataset
+        self.imageset:Imageset = imageset
         dataset_path:str = './dataset/bigset/'
         assert os.path.exists(dataset_path), f"{dataset_path=} is not exist."
         # Inside this path there must be a list of folders arange by mobile phone. Use device enum.
@@ -106,7 +107,13 @@ class SoilDataset_bigset(Dataset):
     def get_target(self, img_path:str) -> float:
         assert len(img_path.split('/')) == 8, f"Expect img_path to have 8 folders but got {img_path=}"
         target_id = int(img_path.split('/')[6])
-        return self.target_df.loc[target_id] # type:ignore
+        target_value = float(self.target_df.loc[target_id]) # type:ignore
+        if(self.imageset == Imageset.p):
+            # Clipping vvalue if higher than 1000
+            if(target_value > 1000):
+                print(f"{target_id=} {target_value=}")
+                target_value = 1000
+        return float(target_value)
         
     def __len__(self):
         return len(self.imgs)
