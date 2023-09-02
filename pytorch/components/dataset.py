@@ -84,6 +84,7 @@ class Environments(Enum):
 class Imageset(Enum):
     om = 'OM'
     p = 'P'
+    k = 'K'
 
 class SoilDataset_bigset(Dataset):
     def __init__(self, imageset:Imageset, device:Devices, environment:Environments, transform=None):
@@ -107,12 +108,16 @@ class SoilDataset_bigset(Dataset):
     def get_target(self, img_path:str) -> float:
         assert len(img_path.split('/')) == 8, f"Expect img_path to have 8 folders but got {img_path=}"
         target_id = int(img_path.split('/')[6])
-        target_value = float(self.target_df.loc[target_id]) # type:ignore
-        if(self.imageset == Imageset.p):
-            # Clipping vvalue if higher than 1000
-            if(target_value > 1000):
-                print(f"{target_id=} {target_value=}")
-                target_value = 1000
+        target_value = float(self.target_df.loc[target_id].iloc[0]) # type:ignore
+
+        if(self.clip_target):
+            if((self.imageset == Imageset.om) and (target_value > 8)):
+                target_value = 8.0
+            if((self.imageset == Imageset.p) and (target_value > 1000)):
+                target_value = 1000.0
+            if((self.imageset == Imageset.k) and (target_value > 1500)):
+                target_value = 1500.0
+
         return float(target_value)
         
     def __len__(self):
