@@ -25,7 +25,6 @@ args = parser.parse_args()
 
 
 
-os.environ["LOGNAME"] = "LianLi"
 mlflow.set_tracking_uri("https://web-mlflow.akraradets.duckdns.org")
 mlflow.set_experiment(experiment_name='Soil')
 
@@ -38,7 +37,7 @@ clip_target = args.clip_target
 normalize_target = args.normalize_target
 epochs = args.epochs
 lr = args.lr
-
+WORKERS = int(os.environ['WORKERS'])
 image_set_dict = {
     'om': Imageset.om, 
     'p': Imageset.p, 
@@ -108,6 +107,6 @@ with mlflow.start_run(run_name=f"{image_set.value}") as parent_run:
         mlflow.log_params(params)
         # train model
         model = load_model(model_name=model_name)
-        train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True,  num_workers=10)
-        test_loader  = DataLoader(dataset=test_dataset,  batch_size=batch_size, shuffle=False, num_workers=10)
+        train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True,  num_workers=WORKERS)
+        test_loader  = DataLoader(dataset=test_dataset,  batch_size=batch_size, shuffle=False, num_workers=WORKERS)
         train_test(model=model, train_loader=train_loader, test_loader=test_loader, epochs=epochs, lr=lr, DEVICE=DEVICE)
