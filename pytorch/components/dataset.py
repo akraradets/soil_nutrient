@@ -69,6 +69,8 @@ class SoilDataset_phone(Dataset):
             X = self.transform(X)
         return X.float(), y.float(), img_name_w_ext
     
+
+import torchvision.transforms as transforms
 class Devices(Enum):
     iphone = 'Iphone'
     oppo = 'Oppo'
@@ -86,10 +88,43 @@ class Imageset(Enum):
     p = 'P'
     k = 'K'
 
+class Preprocessing(Enum):
+    training = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.Resize(350),
+        transforms.CenterCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomVerticalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+    ])
+
+    inferencing  = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.Resize(350),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+    ])
+
+
+
 class SoilDataset_bigset(Dataset):
-    def __init__(self, imageset:Imageset, device:Devices, environment:Environments, transform=None):
-        # BasePath of the dataset
+    def __init__(self, imageset:Imageset, device:Devices, environment:Environments, preprocessing:Preprocessing, clip_target:bool=False, normalize_target:bool=False):
         self.imageset:Imageset = imageset
+        self.clip_target:bool = clip_target
+        self.normalize_target:bool = normalize_target
+        
+        # Set max value for clipping and normalizing
+        self.max_value:float = 0
+        if(self.imageset == Imageset.om):
+            self.max_value = 8.0
+        elif(self.imageset == Imageset.p):
+            self.max_value = 1000.0
+        elif(self.imageset == Imageset.k):
+            self.max_value = 1500.0
+
+        # BasePath of the dataset
         dataset_path:str = './dataset/bigset/'
         assert os.path.exists(dataset_path), f"{dataset_path=} is not exist."
         # Inside this path there must be a list of folders arange by mobile phone. Use device enum.
@@ -103,21 +138,16 @@ class SoilDataset_bigset(Dataset):
         self.target_df = pd.read_csv(target_path, index_col='id')
 
         self.signature = os.path.join(imageset.value,device.value,environment.value)
-        self.transform = transform
+        self.preprocessing = preprocessing.value
 
     def get_target(self, img_path:str) -> float:
         assert len(img_path.split('/')) == 8, f"Expect img_path to have 8 folders but got {img_path=}"
         target_id = int(img_path.split('/')[6])
         target_value = float(self.target_df.loc[target_id].iloc[0]) # type:ignore
-
-        if(self.clip_target):
-            if((self.imageset == Imageset.om) and (target_value > 8)):
-                target_value = 8.0
-            if((self.imageset == Imageset.p) and (target_value > 1000)):
-                target_value = 1000.0
-            if((self.imageset == Imageset.k) and (target_value > 1500)):
-                target_value = 1500.0
-
+        if(self.clip_target and (target_value > self.max_value)):
+            target_value = self.max_value
+        if(self.normalize_target):
+            target_value = target_value / (self.max_value)
         return float(target_value)
         
     def __len__(self):
@@ -128,6 +158,6 @@ class SoilDataset_bigset(Dataset):
         y = self.get_target(img_path=img_path)
         y = torch.tensor(y)
         X = io.read_image(img_path)
-        if self.transform:
-            X = self.transform(X)
+        if self.preprocessing:
+            X = self.preprocessing(X)
         return X.float(), y.float(), img_path

@@ -12,6 +12,8 @@ services:
     volumes:
       - ./pytorch.vscode-server:/root/.vscode-server
       - ./pytorch/:/root/projects
+    env_file:
+      - .env
     deploy:
       resources:
         reservations:
