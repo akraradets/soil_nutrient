@@ -5,7 +5,7 @@ from enum import Enum
 class Models(Enum):
     mobilenet = 'mobilenet_v3_large'
     alexnet = 'alexnet'
-    restnet = 'resnet50'
+    resnet = 'resnet50'
     efficientnet = 'efficientnet_v2_l'
 
 def load_model(model_name:Models) -> torch.nn.Module:
@@ -19,7 +19,7 @@ def load_model(model_name:Models) -> torch.nn.Module:
         model = models.alexnet()
         model.classifier[6] = torch.nn.Linear(in_features=4096, out_features=1, bias=True)
         return model
-    elif(model_name == Models.restnet):
+    elif(model_name == Models.resnet):
         model = models.resnet50()
         model.fc = torch.nn.Linear(in_features=2048, out_features=1, bias=True)
         return model

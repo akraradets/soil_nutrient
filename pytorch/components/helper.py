@@ -88,13 +88,14 @@ def train_test(model:torch.nn.Module, train_loader:DataLoader, test_loader:DataL
             train_mse += train_loss.detach().cpu()
 
         total_time = time.time() - start_time
-        print(total_time, e, train_mse)
+        print(f"TRAIN|{e=} {total_time=} {train_mse}")
         mlflow.log_metric('train_mse', train_mse, step=e)
         if( train_mse <= best_loss ):
             print('save model!!')
             log_model(pytorch_model=model,artifact_path="model")
             best_loss = train_mse
         # Testing
+        start_time = time.time()
         model.eval()
         test_mse = 0
         for b, (image, label, _) in enumerate(test_loader):
@@ -103,6 +104,8 @@ def train_test(model:torch.nn.Module, train_loader:DataLoader, test_loader:DataL
             yhat = model(image) #1. model
             test_loss = J_fn(yhat.reshape(-1), label.reshape(-1)) #2. loss
             test_mse += test_loss.detach().cpu()
+        total_time = time.time() - start_time
+        print(f"TEST |{e=} {total_time=} {test_mse}")
         mlflow.log_metric('test_mse', test_mse, step=e)
                 
     return model
