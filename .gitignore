@@ -4,6 +4,7 @@ __pycache__
 /pytorch/dataset/*
 /pytorch/result/*
 /pytorch/weight/*
-!.keeps
-pytorch/mlruns
+/pytorch/mlruns
+/pytorch/artifact/*
 *.log
+!.keeps
