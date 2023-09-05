@@ -81,9 +81,9 @@ with mlflow.start_run(run_name=f"{model_name.value}", nested=True) as child_run:
     if(model_name == Models.alexnet):
         batch_size = 200
     elif(model_name == Models.mobilenet):
-        batch_size = 100
+        batch_size = 75
     elif(model_name == Models.resnet):
-        batch_size = 50
+        batch_size = 30
 
     params:dict = dict({
         'epochs': epochs,
