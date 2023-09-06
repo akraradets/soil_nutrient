@@ -76,7 +76,7 @@ else:
     mlflow.start_run(run_id=result['run_id'][0])
 mlflow.log_param("parent",True)
 
-with mlflow.start_run(run_name=f"{model_name.value}", nested=True) as child_run:
+with mlflow.start_run(run_name=f"{model_name.value}-{environment.value}", nested=True) as child_run:
     batch_size = 0
     if(model_name == Models.alexnet):
         batch_size = 200
