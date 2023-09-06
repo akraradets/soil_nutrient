@@ -53,7 +53,7 @@ device_dict = {
     'iphone': Devices.iphone,
     'oppo': Devices.oppo,
     'samsung': Devices.samsung,
-    'iphone': Devices.iphone,
+    'redmi': Devices.redmi,
 }
 environment_dict = {
     'all': Environments.all,
@@ -76,7 +76,7 @@ else:
     mlflow.start_run(run_id=result['run_id'][0])
 mlflow.log_param("parent",True)
 
-with mlflow.start_run(run_name=f"{model_name.value}-{environment.value}", nested=True) as child_run:
+with mlflow.start_run(run_name=f"{model_name.value}-{environment.value}-{device.value}", nested=True) as child_run:
     batch_size = 0
     if(model_name == Models.alexnet):
         batch_size = 200

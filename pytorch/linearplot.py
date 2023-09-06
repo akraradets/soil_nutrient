@@ -17,8 +17,6 @@ import argparse
 parser = argparse.ArgumentParser(description="An argument for the training data.")
 parser.add_argument("--clip_target",type=bool, required=True)
 parser.add_argument("--normalize_target",type=bool, required=True)
-parser.add_argument("--epochs",type=int, required=True)
-parser.add_argument("--lr",type=float, required=True)
 parser.add_argument("--image_set",type=str, required=True)
 parser.add_argument("--model_name",type=str, required=True)
 parser.add_argument("--device",type=str, required=True)
@@ -37,8 +35,6 @@ logger.info(args)
 
 clip_target = args.clip_target
 normalize_target = args.normalize_target
-epochs = args.epochs
-lr = args.lr
 WORKERS = int(os.environ['WORKERS'])
 image_set_dict = {
     'om': Imageset.om, 
@@ -55,7 +51,7 @@ device_dict = {
     'iphone': Devices.iphone,
     'oppo': Devices.oppo,
     'samsung': Devices.samsung,
-    'iphone': Devices.iphone,
+    'redmi': Devices.redmi,
 }
 environment_dict = {
     'all': Environments.all,
@@ -77,8 +73,8 @@ elif(model_name == Models.mobilenet):
 elif(model_name == Models.resnet):
     batch_size = 30
 
-def load_model(model_name:Models, image_set:Imageset, environment:Environments) -> Tuple[torch.nn.Module, pd.DataFrame]:
-    search_name = f"{model_name.value}-{environment.value}"
+def load_model(model_name:Models, image_set:Imageset, environment:Environments, device:Devices) -> Tuple[torch.nn.Module, pd.DataFrame]:
+    search_name = f"{model_name.value}-{environment.value}-{device.value}"
     run_info = mlflow.search_runs(experiment_names=['Soil'],
                             filter_string=f"tags.mlflow.runName = '{search_name}'",)
     run_info = run_info.loc[run_info['params.Imageset'] == f'{image_set.value}']
@@ -86,7 +82,7 @@ def load_model(model_name:Models, image_set:Imageset, environment:Environments) 
     loaded_model = mlflow.pytorch.load_model(f'{artifact_uri}/model')
     return loaded_model, run_info
 
-model, run_info = load_model(model_name=model_name, image_set=image_set, environment=environment)
+model, run_info = load_model(model_name=model_name, image_set=image_set, environment=environment, device=device)
 run_id = run_info.iloc[0].loc['run_id']
 with mlflow.start_run(run_id=run_id):
     dataset = SoilDataset_bigset(imageset=image_set, 
