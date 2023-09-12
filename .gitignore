@@ -8,3 +8,4 @@ __pycache__
 /pytorch/artifact/*
 *.log
 !.keeps
+pytorch/nohup.out
