@@ -1,17 +1,24 @@
 version: '3'
 services:
-  pytorch:
-    hostname: 'pytorch.soil'
+  web:
+    image: akraradets/soil-web:v0.0.1
     build:
       context: .
-      dockerfile: pytorch.Dockerfile
+      dockerfile: web.Dockerfile
+    ports:
+      - 9000:80
+    volumes:
+      - vscode-web:/root/.vscode-server
+      - ./soid:/var/www/html
+  dev:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
     # restart: always
     shm_size: '16gb'
-    ports: 
-      - 8000:8000
     volumes:
-      - ./pytorch.vscode-server:/root/.vscode-server
-      - ./pytorch/:/root/projects
+      - vscode-dev:/root/.vscode-server
+      - ./pytorch:/root/projects
     env_file:
       - .env
     deploy:
@@ -21,3 +28,7 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+
+volumes:
+  vscode-dev:
+  vscode-web:

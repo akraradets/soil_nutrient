@@ -1,0 +1,3 @@
+[submodule "soid"]
+	path = soid
+	url = https://github.com/supachai3515/soid.git
