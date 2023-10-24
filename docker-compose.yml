@@ -10,6 +10,23 @@ services:
     volumes:
       - vscode-web:/root/.vscode-server
       - ./soid:/var/www/html
+  api:
+    image: akraradets/soil-api:v0.0.01
+    build:
+      context: .
+      dockerfile: api.Dockerfile
+    ports:
+      - 9001:80
+    volumes:
+      - vscode-api:/root/.vscode-server
+      - /api:/root/projects
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
   dev:
     build:
       context: .
@@ -32,3 +49,4 @@ services:
 volumes:
   vscode-dev:
   vscode-web:
+  vscode-api:
