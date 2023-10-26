@@ -22,9 +22,10 @@ ENV LANGUAGE en_US:en
 
 
 WORKDIR /root/projects
-RUN pip3 install --upgrade pip
-RUN pip3 install mlflow
-RUN pip3 install fastapi
+RUN pip3 install pip==23.3.1
+RUN pip3 install mlflow==2.7.1
+RUN pip3 install fastapi==0.104.0
+RUN pip3 install "uvicorn[standard]"==0.23.2
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-CMD tail -f /dev/null
+CMD uvicorn main:app --reload --host=0.0.0.0 --port=80

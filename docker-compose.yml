@@ -9,24 +9,26 @@ services:
       - 9000:80
     volumes:
       - vscode-web:/root/.vscode-server
-      - ./soid:/var/www/html
+      # - ./soid:/var/www/html
   api:
     image: akraradets/soil-api:v0.0.01
     build:
       context: .
       dockerfile: api.Dockerfile
+    # command: tail -f /dev/null
+    command: uvicorn main:app --reload --host=0.0.0.0 --port=80
     ports:
       - 9001:80
     volumes:
       - vscode-api:/root/.vscode-server
-      - /api:/root/projects
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+      - ./api:/root/projects
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
   dev:
     build:
       context: .

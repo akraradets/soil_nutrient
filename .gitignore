@@ -9,3 +9,6 @@ __pycache__
 *.log
 !.keeps
 pytorch/nohup.out
+info.ignore
+php.ini-production
+php.ini-development

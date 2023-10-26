@@ -1,4 +1,4 @@
-FROM php:8.2-apache-bookworm
+FROM php:7.4-apache-bullseye
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -20,9 +20,16 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en  
 
 RUN apt install -y libzip-dev libpng-dev unzip
-RUN docker-php-ext-install gd zip
+RUN docker-php-ext-install gd zip mysqli
+
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 WORKDIR /var/www/html
+# COPY ./soid /var/www/html/
+# RUN chown -R www-data:www-data /var/www
+EXPOSE 80
 # RUN composer install 
 
+# RUN service apache2 start
 CMD tail -f /dev/null
