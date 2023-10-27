@@ -12,3 +12,6 @@ pytorch/nohup.out
 info.ignore
 php.ini-production
 php.ini-development
+/docker-compose-deploy.yml
+/api/models
+.env

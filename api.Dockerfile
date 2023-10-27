@@ -26,6 +26,8 @@ RUN pip3 install pip==23.3.1
 RUN pip3 install mlflow==2.7.1
 RUN pip3 install fastapi==0.104.0
 RUN pip3 install "uvicorn[standard]"==0.23.2
+RUN pip3 install python-multipart==0.0.6
+RUN pip3 install torch==2.0.1+cu118 torchvision --index-url https://download.pytorch.org/whl/cu118
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 CMD uvicorn main:app --reload --host=0.0.0.0 --port=80

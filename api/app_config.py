@@ -1,0 +1,5 @@
+MODEL_PATH:str="models/"
+MODEL_STAGE:str="Production"
+MODEL_OM:str  ="soil_om"
+MODEL_K:str   ="soil_k"
+MODEL_P:str   ="soil_p"
