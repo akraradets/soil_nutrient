@@ -21,15 +21,18 @@ ENV LANGUAGE en_US:en
 
 RUN apt install -y libzip-dev libpng-dev unzip
 RUN docker-php-ext-install gd zip mysqli
-
+RUN a2enmod rewrite
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 WORKDIR /var/www/html
-# COPY ./soid /var/www/html/
-# RUN chown -R www-data:www-data /var/www
+COPY ./soid /var/www/html/
+RUN chown -R www-data:www-data /var/www
+RUN composer install 
 EXPOSE 80
-# RUN composer install 
 
-# RUN service apache2 start
-CMD tail -f /dev/null
+# clean apt cache
+RUN rm -rf /var/lib/apt/lists/*
+
+# CMD tail -f /dev/null
+CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]
