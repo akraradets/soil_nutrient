@@ -56,7 +56,7 @@ def post_predict_k(image:UploadFile) -> PredictOut:
     image = image.convert("RGB")
 
     process_image, predict = prediction(model=model, image=image)
-
+    predict = predict * 1500.0
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
@@ -79,7 +79,7 @@ def post_predict_p(image:UploadFile) -> PredictOut:
     image = image.convert("RGB")
 
     process_image, predict = prediction(model=model, image=image)
-
+    predict = predict * 1000.0
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
@@ -102,7 +102,7 @@ def post_predict_om(image:UploadFile) -> PredictOut:
     image = image.convert("RGB")
 
     process_image, predict = prediction(model=model, image=image)
-
+    predict = predict * 8.0
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
