@@ -15,3 +15,5 @@ php.ini-development
 /docker-compose-deploy.yml
 /api/models
 .env
+soil_20231030.sql
+db.env

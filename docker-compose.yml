@@ -10,6 +10,15 @@ services:
     volumes:
       - vscode-web:/root/.vscode-server
       # - ./soid:/var/www/html
+  db:
+    image: mariadb:10.6.12
+    restart: always
+    ports:
+      - 3306:3306
+    env_file:
+      - db.env
+    volumes:
+      - database:/var/lib/mysql:Z
   api:
     image: akraradets/soil-api:v0.0.01
     build:
@@ -52,3 +61,4 @@ volumes:
   vscode-dev:
   vscode-web:
   vscode-api:
+  database:
