@@ -1,17 +1,20 @@
 version: '3'
 services:
   web:
-    image: akraradets/soil-web:v0.0.1
+    image: soil-web:v0.0.1
     build:
       context: .
       dockerfile: web.Dockerfile
+    platform: linux/amd64
+    restart: always
     ports:
       - 9000:80
-    volumes:
-      - vscode-web:/root/.vscode-server
+    # volumes:
+    #   - vscode-web:/root/.vscode-server
       # - ./soid:/var/www/html
   db:
     image: mariadb:10.6.12
+    platform: linux/amd64
     restart: always
     ports:
       - 3306:3306
@@ -19,12 +22,14 @@ services:
       - db.env
     volumes:
       - database:/var/lib/mysql:Z
+
   api:
     image: akraradets/soil-api:v0.0.01
     build:
       context: .
       dockerfile: api.Dockerfile
     command: tail -f /dev/null
+    platform: linux/amd64
     # command: uvicorn main:app --reload --host=0.0.0.0 --port=80
     ports:
       - 9001:80

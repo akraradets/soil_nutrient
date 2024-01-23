@@ -1,13 +1,13 @@
-name: BuildNPush to GitHub Container Registry
+name: (Web) BuildNPush to GitHub Container Registry
 run-name: ${{ github.actor }} created ${{ github.ref }}
 
 on:
   push:
     tags:
-        - 'v*'
+      - 'v*'
 
 jobs:
-  build-push:
+  build-push-web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,13 +22,13 @@ jobs:
         uses: docker/metadata-action@v5.1.0
         with:
           # Your image name
-          images: ghcr.io/${{ github.actor }}/${{ vars.IMAGE_NAME }}
+          images: ghcr.io/${{ github.actor }}/soil-web
           tags: type=semver,pattern={{raw}}
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: .Dockerfile
+          file: web.Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
