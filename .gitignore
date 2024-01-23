@@ -21,3 +21,4 @@ soil_20231101-0316.sql
 soil_20231030.sql
 db_backup
 soid/bk/config_safe.php
+api.env

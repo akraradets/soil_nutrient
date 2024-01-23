@@ -27,25 +27,22 @@ services:
       - database:/var/lib/mysql:Z
 
   api:
-    image: akraradets/soil-api:v0.0.01
+    image: soil-api:v1.0.0
     build:
       context: .
       dockerfile: api.Dockerfile
-    command: tail -f /dev/null
+    # command: tail -f /dev/null
     platform: linux/amd64
     # command: uvicorn main:app --reload --host=0.0.0.0 --port=80
     ports:
       - 9001:80
+    env_file:
+      - api.env
     volumes:
-      - vscode-api:/root/.vscode-server
-      - ./api:/root/projects
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [gpu]
+      # - vscode-api:/root/.vscode-server
+      # - ./api:/root/projects
+      - models:/root/projects/models
+
   dev:
     build:
       context: .
@@ -70,3 +67,4 @@ volumes:
   vscode-web:
   vscode-api:
   database:
+  models:
