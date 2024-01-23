@@ -31,6 +31,7 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 WORKDIR /var/www/html
 COPY ./soid /var/www/html/
 RUN chown -R www-data:www-data /var/www
+ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install 
 EXPOSE 80
 
