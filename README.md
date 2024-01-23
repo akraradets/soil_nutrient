@@ -22,7 +22,7 @@ You need to connect to the database.
 To do this, you will need to create an `db.env` file that will be shared between the `web` and `db` container.
 Here is the `db.env` example.
 
-```env
+```sh
 MARIADB_ROOT_PASSWORD=root
 MARIADB_DATABASE=soil
 MARIADB_USER=admin
@@ -36,7 +36,7 @@ This allowed the user to change the endpoint of the database.
 
 Then, we will need another environment file `web.env`.
 
-```env
+```sh
 ENABLE_DEBUG=true
 IP_URL=http://localhost:9000
 ENCRYPTION_KEY=thekey_gofigure
@@ -53,3 +53,20 @@ We have databack up in [Google Drive](https://drive.google.com/drive/folders/1sP
 ## API
 
 The API is the container serving the FastAPI project for predicting nutrients in the soil.
+
+It also needs an environment with the name `api.env`.
+
+The project utilizes `MLFlow` to manage the life cycle of the DL models.
+ 
+```sh
+# Path that will store/cache the models that are loaded from MLFlow server
+MODEL_PATH=models/
+# Model stage
+MODEL_STAGE=Production
+# The name in MLFlow
+MODEL_OM=OM_Model
+MODEL_K=K_Model
+MODEL_P=P_Model
+```
+
+To avoid loading the models from the MLFlow server, you can manually add models with the appropriate name yourself.
