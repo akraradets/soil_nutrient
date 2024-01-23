@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: soil-web:v0.0.1
+    image: soil-web:v1.0.0
     build:
       context: .
       dockerfile: web.Dockerfile
@@ -9,6 +9,9 @@ services:
     restart: always
     ports:
       - 9000:80
+    env_file:
+      - db.env
+      - web.env
     # volumes:
     #   - vscode-web:/root/.vscode-server
       # - ./soid:/var/www/html

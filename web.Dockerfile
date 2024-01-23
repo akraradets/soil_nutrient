@@ -1,7 +1,7 @@
 FROM php:7.4-apache-bullseye
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
+LABEL org.opencontainers.image.source https://github.com/akraradets/soil_nutrient
 ARG BUILD_VERSION='local'
 ENV BUILD_VERSION=${BUILD_VERSION}
 ARG DEBIAN_FRONTEND=noninteractive
@@ -30,6 +30,8 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 WORKDIR /var/www/html
 COPY ./soid /var/www/html/
+RUN rm /var/www/html/bk/config.php
+RUN mv /var/www/html/bk/config_safe.php /var/www/html/config.php
 RUN chown -R www-data:www-data /var/www
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install 
