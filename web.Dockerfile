@@ -24,6 +24,14 @@ ENV LANGUAGE en_US:en
 
 RUN apt install -y libzip-dev libpng-dev unzip
 RUN docker-php-ext-install gd zip mysqli
+
+RUN apt-get update && apt-get install -y \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
+
 RUN a2enmod rewrite
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
@@ -36,6 +44,8 @@ RUN chown -R www-data:www-data /var/www
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install 
 EXPOSE 80
+
+
 
 # clean apt cache
 RUN rm -rf /var/lib/apt/lists/*
