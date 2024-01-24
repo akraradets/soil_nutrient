@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: soil-web:v1.0.0
+    image: soil-web:v1.0.1
     build:
       context: .
       dockerfile: web.Dockerfile
