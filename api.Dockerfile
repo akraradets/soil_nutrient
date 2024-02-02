@@ -34,7 +34,7 @@ RUN pip3 install mlflow==2.7.1 --default-timeout=1000
 RUN pip3 install fastapi==0.104.0
 RUN pip3 install "uvicorn[standard]"==0.23.2
 RUN pip3 install python-multipart==0.0.6
-RUN pip3 install torch==2.0.1+cu118 torchvision --index-url https://download.pytorch.org/whl/cu118
+RUN pip3 install torch==2.1.2+cu118 torchvision --index-url https://download.pytorch.org/whl/cu118
 
 COPY ./api /root/projects
 

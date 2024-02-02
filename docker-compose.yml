@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: soil-web:v1.0.1
+    image: soil-web:v1.0.3
     build:
       context: .
       dockerfile: web.Dockerfile
@@ -41,7 +41,7 @@ services:
     volumes:
       # - vscode-api:/root/.vscode-server
       # - ./api:/root/projects
-      - models:/root/projects/models
+      - ./models:/root/projects/models
 
   dev:
     build:

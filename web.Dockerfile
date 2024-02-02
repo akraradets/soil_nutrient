@@ -46,6 +46,8 @@ RUN chown -R www-data:www-data /var/www
 # ENV COMPOSER_ALLOW_SUPERUSER=1
 USER www-data
 RUN composer install 
+
+COPY ./compose_soid_overwrite/InitialAvatar.php /var/www/html/vendor/lasserafn/php-initial-avatar-generator/src/InitialAvatar.php
 EXPOSE 80
 
 
