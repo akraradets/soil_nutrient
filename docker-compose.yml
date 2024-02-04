@@ -30,7 +30,7 @@ services:
       - database:/var/lib/mysql:Z
 
   api:
-    image: soil-api:v1.0.0
+    image: soil-api:v1.0.1
     build:
       context: .
       dockerfile: api.Dockerfile
@@ -44,7 +44,7 @@ services:
     volumes:
       # - vscode-api:/root/.vscode-server
       # - ./api:/root/projects
-      - ./models:/root/projects/models
+      - models:/root/projects/models
 
   dev:
     build:

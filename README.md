@@ -67,6 +67,9 @@ MODEL_STAGE=Production
 MODEL_OM=OM_Model
 MODEL_K=K_Model
 MODEL_P=P_Model
+MAXCAP_OM=5.0
+MAXCAP_K=600.0
+MAXCAP_P=600.0
 ```
 
 To avoid loading the models from the MLFlow server, you can manually add models with the appropriate name yourself.
