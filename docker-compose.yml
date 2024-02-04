@@ -2,6 +2,8 @@ version: '3'
 services:
   web:
     image: soil-web:v1.0.3
+    depends_on:
+      - db
     build:
       context: .
       dockerfile: web.Dockerfile
@@ -12,9 +14,10 @@ services:
     env_file:
       - db.env
       - web.env
-    # volumes:
-    #   - vscode-web:/root/.vscode-server
-      # - ./soid:/var/www/html
+    volumes:
+      - vscode-web:/root/.vscode-server
+      - ./soid:/var/www/html
+      - vendor:/var/www/html/vendor
   db:
     image: mariadb:10.6.12
     platform: linux/amd64
@@ -68,3 +71,4 @@ volumes:
   vscode-api:
   database:
   models:
+  vendor:
