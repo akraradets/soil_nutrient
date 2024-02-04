@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Base64Bytes
 from utils.models import *
 from utils.logger import *
-
+import os.environ as environ
 from PIL import Image 
 import io
 import base64
@@ -32,12 +32,14 @@ class PredictOut(BaseModel):
     predict: float
     image: Base64Bytes
     preffix: str
+    uncap_predict: float
 
     def answer_build(image:Base64Bytes, predict:float):
         answer = {
             "predict":predict,
             "image":image,
             "preffix":"data:image/png;base64,"
+            "uncap_predict": uncap_predict
         }
         return answer
 
@@ -56,7 +58,9 @@ def post_predict_k(image:UploadFile) -> PredictOut:
     image = image.convert("RGB")
 
     process_image, predict = prediction(model=model, image=image)
-    predict = predict * 1500.0
+    uncap_predict = 1.0 if predict > 1.0 else predict
+    uncap_predict = uncap_predict * environ['MAXCAP_K']
+    predict = predict * environ['MAXCAP_K']
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
@@ -66,8 +70,7 @@ def post_predict_k(image:UploadFile) -> PredictOut:
     # var image = new Image();
     # image.src = resp.preffix + resp.image
     # document.body.appendChild(image)
-
-    return PredictOut.answer_build(image=img_str,predict=predict)
+    return PredictOut.answer_build(image=img_str,predict=predict,uncap_predict=uncap_predict)
 
 @app.post("/predict_p", response_model=PredictOut)
 def post_predict_p(image:UploadFile) -> PredictOut:
@@ -79,7 +82,9 @@ def post_predict_p(image:UploadFile) -> PredictOut:
     image = image.convert("RGB")
 
     process_image, predict = prediction(model=model, image=image)
-    predict = predict * 1000.0
+    uncap_predict = 1.0 if predict > 1.0 else predict
+    uncap_predict = uncap_predict * environ['MAXCAP_P']
+    predict = predict * environ['MAXCAP_P']
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
@@ -90,7 +95,7 @@ def post_predict_p(image:UploadFile) -> PredictOut:
     # image.src = resp.preffix + resp.image
     # document.body.appendChild(image)
 
-    return PredictOut.answer_build(image=img_str,predict=predict)
+    return PredictOut.answer_build(image=img_str,predict=predict,uncap_predict=uncap_predict)
 
 @app.post("/predict_om", response_model=PredictOut)
 def post_predict_om(image:UploadFile) -> PredictOut:
@@ -102,7 +107,9 @@ def post_predict_om(image:UploadFile) -> PredictOut:
     image = image.convert("RGB")
 
     process_image, predict = prediction(model=model, image=image)
-    predict = predict * 8.0
+    uncap_predict = 1.0 if predict > 1.0 else predict
+    uncap_predict = uncap_predict * environ['MAXCAP_OM']
+    predict = predict * environ['MAXCAP_OM']
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
@@ -113,4 +120,4 @@ def post_predict_om(image:UploadFile) -> PredictOut:
     # image.src = resp.preffix + resp.image
     # document.body.appendChild(image)
 
-    return PredictOut.answer_build(image=img_str,predict=predict)
+    return PredictOut.answer_build(image=img_str,predict=predict,uncap_predict=uncap_predict)
