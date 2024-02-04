@@ -37,7 +37,7 @@ class PredictOut(BaseModel):
         answer = {
             "predict":predict,
             "image":image,
-            "preffix":"data:image/png;base64",
+            "preffix":"data:image/png;base64,",
             "uncap_predict": uncap_predict
         }
         return answer
