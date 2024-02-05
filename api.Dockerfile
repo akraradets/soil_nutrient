@@ -39,4 +39,5 @@ RUN pip3 install torch==2.1.2+cu118 torchvision --index-url https://download.pyt
 COPY ./api /root/projects
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-CMD uvicorn main:app --reload --host=0.0.0.0 --port=80
+RUN pip cache purge
+CMD uvicorn main:app --host=0.0.0.0 --port=80

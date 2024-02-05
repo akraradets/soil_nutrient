@@ -4,6 +4,7 @@
     - [ENV](#env)
   - [Database](#database)
   - [API](#api)
+  - [To Build](#to-build)
 
 # SOIL NUTRIENT
 
@@ -73,3 +74,12 @@ MAXCAP_P=600.0
 ```
 
 To avoid loading the models from the MLFlow server, you can manually add models with the appropriate name yourself.
+
+## To Build
+
+We use docker to build the image.
+
+```
+docker compose build web --build-arg BUILD_VERSION=<version>
+docker compose build api --build-arg BUILD_VERSION=<version>
+```

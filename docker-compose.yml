@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    image: soil-web:v1.0.4
+    image: soil-web:v1.0.5
     depends_on:
       - db
     build:
@@ -30,7 +30,7 @@ services:
       - database:/var/lib/mysql:Z
 
   api:
-    image: soil-api:v1.0.1
+    image: soil-api:v1.0.2
     build:
       context: .
       dockerfile: api.Dockerfile

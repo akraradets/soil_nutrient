@@ -9,7 +9,7 @@ def init_logger(name:str, filename:str, path:str='./log', level:int=logging.INFO
     if(os.path.exists(path) == False):
         os.makedirs(path)
 
-    formatter = logging.Formatter('%(asctime)s|%(filename)s:%(lineno)d|%(levelname)s|%(message)s')
+    formatter = logging.Formatter('%(asctime)s|%(filename)s:%(funcName)s:%(lineno)d|%(levelname)s|%(message)s')
     formatter.datefmt = '%d-%m-%Y %H:%M:%S'
     # Handler
     consoleHandler = logging.StreamHandler(sys.stdout)

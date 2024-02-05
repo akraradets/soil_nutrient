@@ -7,8 +7,10 @@ from utils.logger import *
 from PIL import Image 
 import io
 import base64
+import logging
 
-init_logger(name="main", filename="main")
+init_logger(name='main', filename='main')
+logger = logging.getLogger('main')
 
 app = FastAPI()
 
@@ -25,20 +27,24 @@ app.add_middleware(
 )
 
 # Load Model from mlflow
-load_model_to_cache()
+@app.on_event("startup")
+async def startup_model():
+    load_model_to_cache()
 
 class PredictOut(BaseModel):
     predict: float
     image: Base64Bytes
     preffix: str
-    uncap_predict: float
+    raw_predict: float
+    multiplier: float
 
-    def answer_build(image:Base64Bytes, predict:float, uncap_predict:float):
+    def answer_build(image:Base64Bytes, predict:float, raw_predict:float, multiplier:float):
         answer = {
             "predict":predict,
             "image":image,
             "preffix":"data:image/png;base64,",
-            "uncap_predict": uncap_predict
+            "raw_predict": raw_predict,
+            "multiplier": multiplier
         }
         return answer
 
@@ -48,13 +54,25 @@ def get_check():
     return "OK"
 
 @app.get("/build_version")
-def get_check():
+def get_buildversion():
     import os
-    return os.environ["BUILD_VERSION"]
+    answer = os.environ["BUILD_VERSION"]
+    logger.info(f"{answer=}")
+    return answer
 
+def decorate_predict(raw_predict:float, multiplier:float) -> float:
+    # Cap min
+    if(raw_predict < 0.0):
+        return 0.0
+    elif(raw_predict > 1.0):
+        raw_predict = 1.0
+        return raw_predict * multiplier
+    else:
+        return raw_predict * multiplier
 
 @app.post("/predict_k", response_model=PredictOut)
 def post_predict_k(image:UploadFile) -> PredictOut:
+    multiplier:float = MAXCAP_K
     model = load_model(MODEL_K)
     model.eval()
 
@@ -62,10 +80,8 @@ def post_predict_k(image:UploadFile) -> PredictOut:
     image = Image.open(io.BytesIO(file_bytes))
     image = image.convert("RGB")
 
-    process_image, predict = prediction(model=model, image=image)
-    uncap_predict = 1.0 if predict > 1.0 else predict
-    uncap_predict = uncap_predict * MAXCAP_K
-    predict = predict * MAXCAP_K
+    process_image, raw_predict = prediction(model=model, image=image)
+    predict = decorate_predict(raw_predict=raw_predict, multiplier=multiplier)
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
@@ -75,10 +91,12 @@ def post_predict_k(image:UploadFile) -> PredictOut:
     # var image = new Image();
     # image.src = resp.preffix + resp.image
     # document.body.appendChild(image)
-    return PredictOut.answer_build(image=img_str,predict=predict,uncap_predict=uncap_predict)
+    logger.info(f"{predict=}|{raw_predict=}|{multiplier=}")
+    return PredictOut.answer_build(image=img_str,predict=predict,raw_predict=raw_predict,multiplier=multiplier)
 
 @app.post("/predict_p", response_model=PredictOut)
 def post_predict_p(image:UploadFile) -> PredictOut:
+    multiplier:float = MAXCAP_P
     model = load_model(MODEL_P)
     model.eval()
 
@@ -86,10 +104,8 @@ def post_predict_p(image:UploadFile) -> PredictOut:
     image = Image.open(io.BytesIO(file_bytes))
     image = image.convert("RGB")
 
-    process_image, predict = prediction(model=model, image=image)
-    uncap_predict = 1.0 if predict > 1.0 else predict
-    uncap_predict = uncap_predict * MAXCAP_P
-    predict = predict * MAXCAP_P
+    process_image, raw_predict = prediction(model=model, image=image)
+    predict = decorate_predict(raw_predict=raw_predict, multiplier=multiplier)
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
@@ -99,11 +115,12 @@ def post_predict_p(image:UploadFile) -> PredictOut:
     # var image = new Image();
     # image.src = resp.preffix + resp.image
     # document.body.appendChild(image)
-
-    return PredictOut.answer_build(image=img_str,predict=predict,uncap_predict=uncap_predict)
+    logger.info(f"{predict=}|{raw_predict=}|{multiplier=}")
+    return PredictOut.answer_build(image=img_str,predict=predict,raw_predict=raw_predict,multiplier=multiplier)
 
 @app.post("/predict_om", response_model=PredictOut)
 def post_predict_om(image:UploadFile) -> PredictOut:
+    multiplier:float = MAXCAP_OM
     model = load_model(MODEL_OM)
     model.eval()
 
@@ -111,10 +128,8 @@ def post_predict_om(image:UploadFile) -> PredictOut:
     image = Image.open(io.BytesIO(file_bytes))
     image = image.convert("RGB")
 
-    process_image, predict = prediction(model=model, image=image)
-    uncap_predict = 1.0 if predict > 1.0 else predict
-    uncap_predict = uncap_predict * MAXCAP_OM
-    predict = predict * MAXCAP_OM
+    process_image, raw_predict = prediction(model=model, image=image)
+    predict = decorate_predict(raw_predict=raw_predict, multiplier=multiplier)
     buffered = io.BytesIO()
     process_image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
@@ -124,5 +139,5 @@ def post_predict_om(image:UploadFile) -> PredictOut:
     # var image = new Image();
     # image.src = resp.preffix + resp.image
     # document.body.appendChild(image)
-
-    return PredictOut.answer_build(image=img_str,predict=predict,uncap_predict=uncap_predict)
+    logger.info(f"{predict=}|{raw_predict=}|{multiplier=}")
+    return PredictOut.answer_build(image=img_str,predict=predict,raw_predict=raw_predict,multiplier=multiplier)
